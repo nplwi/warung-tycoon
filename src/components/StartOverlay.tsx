@@ -1,7 +1,11 @@
 import React from 'react';
-import { Coffee, Flame, Play, RotateCcw, Sparkles, Trophy } from 'lucide-react';
 import { formatRupiah } from '../constants/gameData';
 import { SavedProgress } from '../types/game';
+import {
+  PixelCoinIcon,
+  PixelCustomerSprite,
+  PixelLantern,
+} from './PixelSprites';
 
 interface StartOverlayProps {
   progress: SavedProgress;
@@ -15,85 +19,75 @@ export const StartOverlay: React.FC<StartOverlayProps> = ({
   onResetSave,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-[#120F0D]/90 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="wood-panel max-w-lg w-full rounded-2xl border border-amber-700/40 p-6 sm:p-7 shadow-2xl">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center animate-lantern">
-            <Coffee className="w-6 h-6 text-amber-400" />
-          </div>
+    <div className="fixed inset-0 z-50 bg-[#14110F]/92 flex items-center justify-center p-4">
+      <div className="pixel-chalkboard max-w-xl w-full p-5 sm:p-7">
+        <div className="flex items-center justify-between gap-3 border-b-2 border-[#3E4C42] pb-4 mb-4">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-amber-400">
-              Angkringan Midnight Sim
-            </span>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#F3EFEA]">
-              Warung Tycoon
+            <div className="font-pixel text-[10px] text-[#FFB300] mb-1.5">
+              ANGKRINGAN MIDNIGHT SIM
+            </div>
+            <h1 className="font-pixel text-lg sm:text-xl text-[#EFEBE9] leading-snug">
+              WARUNG TYCOON
             </h1>
+            <div className="font-vt text-xl text-[#A5D6A7]">
+              Shift Tengah Malam (00:00 - 05:00 WIB)
+            </div>
+          </div>
+          <PixelLantern />
+        </div>
+
+        {/* Pixel Cast Preview */}
+        <div className="flex items-center justify-around bg-[#14110F] border-2 border-[#0B0908] py-3 px-2 mb-4">
+          <div className="flex flex-col items-center gap-1">
+            <PixelCustomerSprite archetype="ojol" />
+            <span className="font-vt text-sm text-[#81C784]">Ojol Malam</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <PixelCustomerSprite archetype="mahasiswa" />
+            <span className="font-vt text-sm text-[#FFAB91]">Mahasiswa</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <PixelCustomerSprite archetype="pekerja" />
+            <span className="font-vt text-sm text-[#B0BEC5]">Pekerja Shift</span>
           </div>
         </div>
 
-        <p className="text-sm text-[#D6CEC2] leading-relaxed mb-5">
-          Kelola warung kopi &amp; angkringan tengah malam dari pukul{' '}
-          <span className="text-amber-300 font-semibold">00:00 hingga 05:00</span>{' '}
-          (5 menit waktu nyata). Racik minuman hangat, goreng tahu/tempe/bakwan
-          tanpa gosong, dan layani pelanggan sebelum kesabaran mereka habis!
-        </p>
-
-        <div className="grid grid-cols-3 gap-2.5 mb-5">
-          <div className="rounded-xl bg-[#181512]/90 border border-[#3E312B] p-3 text-center">
-            <Coffee className="w-4 h-4 text-amber-400 mx-auto mb-1" />
-            <div className="text-xs font-semibold text-[#F3EFEA]">1. Racik</div>
-            <div className="text-[10px] text-[#A89F91]">
-              Rebus air &amp; seduh kopi/teh/jahe
-            </div>
-          </div>
-          <div className="rounded-xl bg-[#181512]/90 border border-[#3E312B] p-3 text-center">
-            <Flame className="w-4 h-4 text-orange-400 mx-auto mb-1" />
-            <div className="text-xs font-semibold text-[#F3EFEA]">2. Goreng</div>
-            <div className="text-[10px] text-[#A89F91]">
-              Angkat pas matang, jangan gosong
-            </div>
-          </div>
-          <div className="rounded-xl bg-[#181512]/90 border border-[#3E312B] p-3 text-center">
-            <Sparkles className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
-            <div className="text-xs font-semibold text-[#F3EFEA]">3. Sajikan</div>
-            <div className="text-[10px] text-[#A89F91]">
-              Cocokkan nampan &amp; raih tip kilat
-            </div>
-          </div>
+        <div className="pixel-paper p-3 mb-4 font-vt text-lg leading-snug">
+          <div>1. Rebus air di teko &amp; racik kopi, teh, atau susu jahe.</div>
+          <div>2. Goreng tahu, tempe, bakwan — angkat sebelum gosong!</div>
+          <div>3. Cocokkan nampan saji &amp; klik pelanggan untuk melayani.</div>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl bg-[#181512]/80 border border-[#3E312B] px-4 py-2.5 mb-5 text-xs">
-          <div className="flex items-center gap-2 text-[#D6CEC2]">
-            <Trophy className="w-4 h-4 text-amber-400" />
-            <span>Rekor Kas:</span>
-            <strong className="font-mono-num text-emerald-300">
+        <div className="flex items-center justify-between bg-[#14110F] border-2 border-[#0B0908] px-3 py-2 mb-5">
+          <div className="flex items-center gap-2">
+            <PixelCoinIcon />
+            <span className="font-vt text-lg text-[#D7CCC8]">Rekor Kas:</span>
+            <span className="font-pixel text-[10px] text-[#FFB300]">
               {formatRupiah(progress.highScoreCash)}
-            </strong>
+            </span>
           </div>
-          <div className="text-[#A89F91]">
-            Hari Terbuka:{' '}
-            <strong className="text-amber-300">Hari {progress.unlockedDay}</strong>
-          </div>
+          <span className="font-pixel text-[10px] text-[#A5D6A7]">
+            HARI {progress.unlockedDay}
+          </span>
         </div>
 
         <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={onStartDay}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#181512] font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-amber-900/30"
+            className="pixel-btn flex-1 py-3 px-4 bg-[#FFB300] hover:bg-[#FFC107] text-[#14110F] font-pixel text-xs cursor-pointer"
           >
-            <Play className="w-4 h-4 fill-current" />
-            Buka Warung — Hari {progress.unlockedDay}
+            BUKA WARUNG (HARI {progress.unlockedDay})
           </button>
 
           {progress.unlockedDay > 1 && (
             <button
               type="button"
               onClick={onResetSave}
+              className="pixel-btn py-3 px-3 bg-[#3E2723] text-[#EFEBE9] font-pixel text-[10px] cursor-pointer"
               title="Reset progres ke Hari 1"
-              className="p-3 rounded-xl bg-[#2C221E] hover:bg-[#3A2D28] border border-[#4D3D35] text-[#D6CEC2] transition-colors cursor-pointer"
             >
-              <RotateCcw className="w-4 h-4" />
+              RESET
             </button>
           )}
         </div>

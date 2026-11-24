@@ -1,14 +1,5 @@
 import React from 'react';
 import {
-  ArrowRight,
-  Award,
-  Package,
-  RotateCcw,
-  ShoppingBag,
-  Sparkles,
-  Wrench,
-} from 'lucide-react';
-import {
   formatRupiah,
   INGREDIENT_ORDER,
   INGREDIENTS,
@@ -20,6 +11,7 @@ import {
   ShiftStats,
   UpgradesState,
 } from '../types/game';
+import { PixelCoinIcon } from './PixelSprites';
 
 interface ShiftEndModalProps {
   day: number;
@@ -47,30 +39,37 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
   onBackToMenu,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-[#120F0D]/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="wood-panel max-w-4xl w-full rounded-2xl border border-amber-700/40 p-5 sm:p-6 shadow-2xl my-auto">
+    <div className="fixed inset-0 z-50 bg-[#14110F]/92 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+      <div className="pixel-chalkboard max-w-4xl w-full p-5 sm:p-6 my-auto">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#3E312B]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-[#3E4C42]">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-amber-400">
-              Shift Pukul 05:00 WIB Selesai
-            </span>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#F3EFEA]">
-              Laporan Warung — Hari {day}
+            <div className="font-pixel text-[9px] text-[#FFB300] mb-1">
+              SHIFT 05:00 WIB SELESAI
+            </div>
+            <h2 className="font-pixel text-sm sm:text-base text-[#EFEBE9]">
+              LAPORAN WARUNG — HARI {day}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="bg-[#181512] border border-[#3E312B] rounded-xl px-3.5 py-2 text-right">
-              <div className="text-[10px] text-[#A89F91]">Saldo Kas</div>
-              <div className="font-mono-num text-base font-bold text-emerald-300">
-                {formatRupiah(cash)}
+          <div className="flex items-center gap-2.5">
+            <div className="bg-[#14110F] border-2 border-[#0B0908] px-3 py-1.5 flex items-center gap-2">
+              <PixelCoinIcon />
+              <div>
+                <div className="font-vt text-xs text-[#A1887F] leading-none">
+                  KAS WARUNG
+                </div>
+                <div className="font-pixel text-[10px] text-[#FFB300]">
+                  {formatRupiah(cash)}
+                </div>
               </div>
             </div>
-            <div className="bg-[#181512] border border-[#3E312B] rounded-xl px-3.5 py-2 text-right">
-              <div className="text-[10px] text-[#A89F91]">Reputasi</div>
-              <div className="font-mono-num text-base font-bold text-amber-300">
-                {reputation}%
+            <div className="bg-[#14110F] border-2 border-[#0B0908] px-3 py-1.5">
+              <div className="font-vt text-xs text-[#A1887F] leading-none">
+                REPUTASI
+              </div>
+              <div className="font-pixel text-[10px] text-[#A5D6A7]">
+                ★ {reputation}%
               </div>
             </div>
           </div>
@@ -78,39 +77,37 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
 
         {/* Summary Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
-          <div className="rounded-xl bg-[#181512]/85 border border-[#3E312B] p-3">
-            <div className="text-[11px] text-[#A89F91]">Omzet Shift</div>
-            <div className="font-mono-num text-sm sm:text-base font-bold text-emerald-300">
+          <div className="pixel-paper p-2.5">
+            <div className="font-vt text-sm text-[#5D4037]">Omzet Shift</div>
+            <div className="font-pixel text-[10px] text-[#2E7D32]">
               {formatRupiah(stats.revenueEarned)}
             </div>
           </div>
-          <div className="rounded-xl bg-[#181512]/85 border border-[#3E312B] p-3">
-            <div className="text-[11px] text-[#A89F91]">Pelanggan Puas</div>
-            <div className="font-mono-num text-sm sm:text-base font-bold text-[#F3EFEA]">
-              {stats.customersServed} orang
+          <div className="pixel-paper p-2.5">
+            <div className="font-vt text-sm text-[#5D4037]">Pelanggan Puas</div>
+            <div className="font-pixel text-[10px] text-[#14110F]">
+              {stats.customersServed} ORANG
             </div>
           </div>
-          <div className="rounded-xl bg-[#181512]/85 border border-[#3E312B] p-3">
-            <div className="text-[11px] text-[#A89F91]">Tip Kecepatan</div>
-            <div className="font-mono-num text-sm sm:text-base font-bold text-amber-300">
+          <div className="pixel-paper p-2.5">
+            <div className="font-vt text-sm text-[#5D4037]">Tip Kecepatan</div>
+            <div className="font-pixel text-[10px] text-[#E65100]">
               {formatRupiah(stats.speedTipsEarned)}
             </div>
           </div>
-          <div className="rounded-xl bg-[#181512]/85 border border-[#3E312B] p-3">
-            <div className="text-[11px] text-[#A89F91]">Kabur / Gosong</div>
-            <div className="font-mono-num text-sm sm:text-base font-bold text-red-300">
+          <div className="pixel-paper p-2.5">
+            <div className="font-vt text-sm text-[#5D4037]">Kabur / Gosong</div>
+            <div className="font-pixel text-[10px] text-[#D32F2F]">
               {stats.customersLost} / {stats.burnedCount}
             </div>
           </div>
         </div>
 
-        {/* Two Columns: Upgrades & Wholesale Restock */}
+        {/* Upgrades & Wholesale */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
-          {/* Upgrades */}
-          <div className="bg-[#181512]/70 border border-[#3E312B] rounded-xl p-3.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5 mb-3">
-              <Wrench className="w-3.5 h-3.5" />
-              Upgrade Peralatan Warung
+          <div className="bg-[#14110F] border-2 border-[#0B0908] p-3">
+            <h3 className="font-pixel text-[10px] text-[#FFB300] mb-3">
+              UPGRADE PERALATAN
             </h3>
             <div className="space-y-2.5">
               {UPGRADE_CONFIGS.map((cfg) => {
@@ -122,37 +119,26 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
                 return (
                   <div
                     key={cfg.key}
-                    className="rounded-xl bg-[#241C18] border border-[#3E312B] p-3 flex items-center justify-between gap-3"
+                    className="bg-[#261714] border-2 border-[#0B0908] p-2.5 flex items-center justify-between gap-2"
                   >
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs sm:text-sm font-bold text-[#F3EFEA]">
-                          {cfg.name}
-                        </span>
-                        <span className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 font-mono-num text-[10px] font-semibold">
-                          Lv {lvl}/{cfg.maxLevel}
+                      <div className="font-vt text-lg font-bold text-[#EFEBE9] leading-none">
+                        {cfg.name}{' '}
+                        <span className="text-[#FFB300]">
+                          (Lv {lvl}/{cfg.maxLevel})
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#A89F91] mt-0.5">
-                        {isMax
-                          ? 'Sudah mencapai level maksimal!'
-                          : cfg.description(lvl)}
+                      <p className="font-vt text-sm text-[#D7CCC8] leading-tight mt-0.5">
+                        {isMax ? 'Level Maksimal!' : cfg.description(lvl)}
                       </p>
                     </div>
-
                     <button
                       type="button"
                       disabled={!canAfford}
                       onClick={() => onBuyUpgrade(cfg.key)}
-                      className="shrink-0 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:bg-[#2E2520] disabled:text-[#6B6158] text-[#181512] font-bold text-xs transition-colors cursor-pointer disabled:cursor-not-allowed"
+                      className="pixel-btn shrink-0 px-2.5 py-1.5 bg-[#FFB300] disabled:bg-[#3E2723] disabled:text-[#8D6E63] text-[#14110F] font-pixel text-[9px] cursor-pointer disabled:cursor-not-allowed"
                     >
-                      {isMax ? (
-                        <span className="flex items-center gap-1">
-                          <Award className="w-3.5 h-3.5" /> Maks
-                        </span>
-                      ) : (
-                        formatRupiah(cost)
-                      )}
+                      {isMax ? 'MAKS' : formatRupiah(cost)}
                     </button>
                   </div>
                 );
@@ -160,11 +146,9 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
             </div>
           </div>
 
-          {/* Wholesale Restock */}
-          <div className="bg-[#181512]/70 border border-[#3E312B] rounded-xl p-3.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5 mb-3">
-              <ShoppingBag className="w-3.5 h-3.5" />
-              Kulakan Bahan Baku (Harga Grosir)
+          <div className="bg-[#14110F] border-2 border-[#0B0908] p-3">
+            <h3 className="font-pixel text-[10px] text-[#A5D6A7] mb-3">
+              KULAKAN BAHAN (GROSIR)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {INGREDIENT_ORDER.map((id) => {
@@ -176,31 +160,27 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
                 return (
                   <div
                     key={id}
-                    className="rounded-lg bg-[#241C18] border border-[#3E312B] px-2.5 py-2 flex items-center justify-between gap-2"
+                    className="bg-[#261714] border-2 border-[#0B0908] px-2.5 py-1.5 flex items-center justify-between gap-2"
                   >
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-[#F3EFEA] truncate">
+                      <div className="font-vt text-base font-bold text-[#EFEBE9] truncate leading-none">
                         {meta.name}
                       </div>
-                      <div className="text-[10px] text-[#A89F91] flex items-center gap-1">
-                        <Package className="w-3 h-3" />
-                        <span className="font-mono-num">
-                          {stock}/{meta.maxStock}
-                        </span>
+                      <div className="font-vt text-sm text-[#A1887F]">
+                        Stok: {stock}/{meta.maxStock}
                       </div>
                     </div>
-
                     <button
                       type="button"
                       disabled={!canAfford}
                       onClick={() => onBuyWholesale(id)}
-                      className="shrink-0 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:bg-[#2E2520] disabled:text-[#6B6158] text-white font-semibold text-[11px] transition-colors cursor-pointer disabled:cursor-not-allowed"
+                      className="pixel-btn shrink-0 px-2 py-1 bg-[#2E7D32] disabled:bg-[#3E2723] disabled:text-[#8D6E63] text-[#EFEBE9] font-vt text-sm font-bold cursor-pointer disabled:cursor-not-allowed"
                     >
                       {isFull
                         ? 'Penuh'
-                        : `+${meta.wholesaleQty} • ${formatRupiah(
+                        : `+${meta.wholesaleQty} (${formatRupiah(
                             meta.wholesalePrice
-                          )}`}
+                          )})`}
                     </button>
                   </div>
                 );
@@ -209,25 +189,22 @@ export const ShiftEndModal: React.FC<ShiftEndModalProps> = ({
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#3E312B]">
+        {/* Footer */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t-2 border-[#3E4C42]">
           <button
             type="button"
             onClick={onBackToMenu}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#2C221E] hover:bg-[#3A2D28] border border-[#493A32] text-xs font-semibold text-[#D6CEC2] cursor-pointer"
+            className="pixel-btn px-3.5 py-2 bg-[#3E2723] text-[#EFEBE9] font-pixel text-[9px] cursor-pointer"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            Ke Menu Utama
+            MENU UTAMA
           </button>
 
           <button
             type="button"
             onClick={onNextDay}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#181512] font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-amber-900/30"
+            className="pixel-btn px-5 py-2.5 bg-[#FFB300] hover:bg-[#FFC107] text-[#14110F] font-pixel text-[10px] cursor-pointer"
           >
-            <Sparkles className="w-4 h-4" />
-            Lanjut Shift Hari {day + 1}
-            <ArrowRight className="w-4 h-4" />
+            LANJUT HARI {day + 1} &gt;&gt;
           </button>
         </div>
       </div>

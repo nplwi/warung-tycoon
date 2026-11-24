@@ -101,6 +101,7 @@ export function App() {
   const [shakingSlot, setShakingSlot] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [bgmEnabled, setBgmEnabled] = useState<boolean>(true);
 
   const spawnCooldownRef = useRef<number>(1.5);
   const toastTimerRef = useRef<number | null>(null);
@@ -122,12 +123,11 @@ export function App() {
       setPopups((prev) => [...prev, { id, slotIndex, text, tone, subtext }]);
       window.setTimeout(() => {
         setPopups((prev) => prev.filter((p) => p.id !== id));
-      }, 1300);
+      }, 1250);
     },
     []
   );
 
-  // Persist progress whenever core economy/upgrades change
   const persistState = useCallback(
     (
       nextCash: number,
@@ -153,6 +153,7 @@ export function App() {
 
   const startShift = useCallback(
     (targetDay: number, currentUpgrades: UpgradesState) => {
+      soundEngine.unlockAndStartBgm();
       setDay(targetDay);
       setElapsedSeconds(0);
       setCustomers(Array(MAX_CUSTOMER_SLOTS).fill(null));
@@ -187,14 +188,13 @@ export function App() {
   useEffect(() => {
     if (phase !== 'playing') return;
 
-    const dt = 0.1; // 100ms tick
+    const dt = 0.1;
     const timer = window.setInterval(() => {
-      // 1. Advance Shift Clock
       setElapsedSeconds((prevElapsed) => {
         const nextElapsed = prevElapsed + dt;
         if (nextElapsed >= SHIFT_DURATION_SECONDS) {
           setPhase('shift_end');
-          soundEngine.playCashRegister();
+          soundEngine.playShiftEndBell();
           return SHIFT_DURATION_SECONDS;
         }
         return nextElapsed;
@@ -204,7 +204,6 @@ export function App() {
       const stoveMult = 1 + upgrades.stoveLevel * 0.25;
       const warmDecayMult = Math.max(0.4, 1 - upgrades.displayLevel * 0.18);
 
-      // 2. Kettle Boiling
       setKettle((prev) => {
         if (!prev.isBoiling) return prev;
         const step = (100 / BASE_BOIL_SECONDS) * stoveMult * dt;
@@ -220,7 +219,6 @@ export function App() {
         return { ...prev, boilProgress: nextProg };
       });
 
-      // 3. Wok Frying & Burning
       setWokSlots((prev) =>
         prev.map((slot) => {
           if (slot.status === 'empty' || slot.status === 'burned') return slot;
@@ -239,7 +237,6 @@ export function App() {
         })
       );
 
-      // 4. Warming Rack Cooling
       setWarmRack((prev) =>
         prev.map((item) => ({
           ...item,
@@ -250,7 +247,6 @@ export function App() {
         }))
       );
 
-      // 5. Customer Patience Drain & Leaving
       setCustomers((prev) => {
         const drainRate = peak ? 1.35 : 1.0;
         let changed = false;
@@ -271,7 +267,6 @@ export function App() {
         return changed ? next : prev;
       });
 
-      // 6. Customer Spawning
       spawnCooldownRef.current -= dt;
       if (spawnCooldownRef.current <= 0) {
         setCustomers((prev) => {
@@ -306,18 +301,21 @@ export function App() {
     return () => window.clearInterval(timer);
   }, [phase, elapsedSeconds, day, upgrades, addPopup]);
 
-  // Save progress when shift ends
   useEffect(() => {
     if (phase === 'shift_end') {
       persistState(cash, reputation, inventory, upgrades, day + 1);
     }
   }, [phase, cash, reputation, inventory, upgrades, day, persistState]);
 
-  // Actions
   const handleToggleMute = () => {
     const next = !isMuted;
     setIsMuted(next);
     soundEngine.setMuted(next);
+  };
+
+  const handleToggleBgm = () => {
+    const next = soundEngine.toggleBgm();
+    setBgmEnabled(next);
   };
 
   const handleTogglePause = () => {
@@ -521,11 +519,10 @@ export function App() {
       slotIndex,
       `+${formatRupiah(earned)}`,
       speedTip > 0 ? 'tip' : 'cash',
-      speedTip > 0 ? `Termasuk Tip Kilat ${formatRupiah(speedTip)}` : undefined
+      speedTip > 0 ? `Tip Kilat ${formatRupiah(speedTip)}` : undefined
     );
   };
 
-  // End-of-shift Shop Actions
   const handleBuyUpgrade = (key: keyof UpgradesState) => {
     const cfg = UPGRADE_CONFIGS.find((u) => u.key === key);
     if (!cfg) return;
@@ -567,7 +564,7 @@ export function App() {
   const remainingSeconds = Math.max(0, SHIFT_DURATION_SECONDS - elapsedSeconds);
 
   return (
-    <div className="warung-bg min-h-screen lg:h-screen lg:overflow-hidden flex flex-col">
+    <div className="pixel-night-bg min-h-screen lg:h-screen lg:overflow-hidden flex flex-col">
       <TopHud
         day={day}
         elapsedSeconds={elapsedSeconds}
@@ -575,12 +572,14 @@ export function App() {
         cash={cash}
         reputation={reputation}
         isMuted={isMuted}
+        bgmEnabled={bgmEnabled}
         isPaused={phase === 'paused'}
         onToggleMute={handleToggleMute}
+        onToggleBgm={handleToggleBgm}
         onTogglePause={handleTogglePause}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 py-2.5 sm:px-5 sm:py-3 flex flex-col gap-3 min-h-0">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-2.5 min-h-0">
         <CustomerCounter
           customers={customers}
           tray={tray}
@@ -608,38 +607,35 @@ export function App() {
         />
       </main>
 
-      {/* Toast feedback */}
       {toast && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-full bg-[#2C221E] border border-amber-500/50 text-amber-200 text-xs font-semibold shadow-xl">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-4 py-2 pixel-paper font-vt text-lg font-bold shadow-[4px_4px_0_#0B0908]">
           {toast}
         </div>
       )}
 
-      {/* Pause Overlay */}
       {phase === 'paused' && (
-        <div className="fixed inset-0 z-40 bg-[#120F0D]/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="wood-panel rounded-2xl border border-amber-700/40 p-6 max-w-sm w-full text-center">
-            <h2 className="font-display text-xl font-bold text-[#F3EFEA] mb-2">
-              Shift Dijeda
+        <div className="fixed inset-0 z-40 bg-[#14110F]/85 flex items-center justify-center p-4">
+          <div className="pixel-chalkboard p-6 max-w-sm w-full text-center">
+            <h2 className="font-pixel text-sm text-[#FFB300] mb-3">
+              SHIFT DIJEDA
             </h2>
-            <p className="text-xs text-[#A89F91] mb-5">
-              Warung sedang tutup sebentar. Lanjutkan melayani pelanggan tengah
-              malam?
+            <p className="font-vt text-lg text-[#D7CCC8] mb-5">
+              Warung tutup sebentar. Lanjutkan melayani pelanggan malam?
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               <button
                 type="button"
                 onClick={handleTogglePause}
-                className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#181512] font-bold text-sm cursor-pointer"
+                className="pixel-btn w-full py-2.5 bg-[#FFB300] text-[#14110F] font-pixel text-[10px] cursor-pointer"
               >
-                Lanjutkan Shift
+                LANJUTKAN SHIFT
               </button>
               <button
                 type="button"
                 onClick={handleBackToMenu}
-                className="w-full py-2 rounded-xl bg-[#2C221E] hover:bg-[#3A2D28] border border-[#493A32] text-xs font-semibold text-[#D6CEC2] cursor-pointer"
+                className="pixel-btn w-full py-2 bg-[#3E2723] text-[#EFEBE9] font-pixel text-[10px] cursor-pointer"
               >
-                Kembali ke Menu Utama
+                MENU UTAMA
               </button>
             </div>
           </div>

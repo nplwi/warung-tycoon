@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
 import {
-  AlertTriangle,
-  Coffee,
-  Droplets,
-  Flame,
-  PackagePlus,
-  Snowflake,
-  Trash2,
-  Utensils,
-} from 'lucide-react';
-import {
   BURN_THRESHOLD,
   DRINK_LABELS,
   formatDrinkName,
@@ -31,6 +21,11 @@ import {
   WokSlot,
 } from '../types/game';
 import { isTrayEmpty } from '../utils/gameLogic';
+import {
+  PixelDrinkIcon,
+  PixelGorenganIcon,
+  PixelNasiKucingIcon,
+} from './PixelSprites';
 
 interface KitchenWorkbenchProps {
   cash: number;
@@ -92,59 +87,66 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
   const trayEmpty = isTrayEmpty(tray);
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2.5 sm:gap-3 flex-1 min-h-0">
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2.5 flex-1 min-h-0">
       {/* 1. Stasiun Minuman */}
-      <div className="lg:col-span-3 wood-panel rounded-xl border border-[#463730] p-3 flex flex-col justify-between gap-2.5">
+      <div className="lg:col-span-3 pixel-wood p-3 flex flex-col justify-between gap-2">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-              <Coffee className="w-3.5 h-3.5" />
-              Stasiun Minuman
+            <h2 className="font-pixel text-[10px] text-[#FFB300]">
+              STASIUN MINUMAN
             </h2>
-            <span className="font-mono-num text-[11px] text-[#D6CEC2]">
-              Air Panas: {kettle.hotServings}/{MAX_KETTLE_SERVINGS}
+            <span className="font-vt text-base text-[#EFEBE9]">
+              Teko: {kettle.hotServings}/{MAX_KETTLE_SERVINGS}
             </span>
           </div>
 
-          {/* Kettle Control */}
-          <div className="bg-[#181512]/85 border border-[#3E312B] rounded-lg p-2 mb-2.5">
+          {/* Kettle on Stove */}
+          <div className="bg-[#14110F] border-2 border-[#0B0908] p-2 mb-2">
             <div className="flex items-center justify-between gap-2 mb-1.5">
-              <div className="flex items-center gap-1.5">
-                <Droplets
-                  className={`w-3.5 h-3.5 ${
-                    kettle.isBoiling
-                      ? 'text-amber-400 animate-bounce'
-                      : 'text-sky-400'
-                  }`}
-                />
-                <span className="text-[11px] font-medium text-[#F3EFEA]">
+              <div className="flex items-center gap-2">
+                <svg
+                  viewBox="0 0 14 12"
+                  className="w-6 h-5 shrink-0"
+                  shapeRendering="crispEdges"
+                >
+                  <rect x="3" y="2" width="7" height="7" fill="#90A4AE" />
+                  <rect x="4" y="1" width="5" height="1" fill="#CFD8DC" />
+                  <rect x="10" y="3" width="2" height="4" fill="#607D8B" />
+                  <rect x="1" y="4" width="2" height="2" fill="#B0BEC5" />
+                  <rect
+                    x="3"
+                    y="10"
+                    width="7"
+                    height="2"
+                    fill={kettle.isBoiling ? '#FFB300' : '#4E342E'}
+                  />
+                </svg>
+                <span className="font-vt text-base text-[#EFEBE9]">
                   {kettle.isBoiling
-                    ? `Merebus... ${Math.round(kettle.boilProgress)}%`
+                    ? `Merebus ${Math.round(kettle.boilProgress)}%`
                     : kettle.hotServings > 0
-                    ? 'Teko Siap Seduh'
-                    : 'Air Panas Habis'}
+                      ? 'Air Panas Siap'
+                      : 'Teko Kosong'}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={onBoilWater}
                 disabled={!canBoil}
-                className="px-2 py-1 rounded text-[11px] font-semibold bg-amber-600/90 hover:bg-amber-500 disabled:bg-[#2E2520] disabled:text-[#6B6158] text-[#181512] transition-colors cursor-pointer disabled:cursor-not-allowed"
+                className="pixel-btn px-2 py-1 bg-[#FFB300] disabled:bg-[#261714] disabled:text-[#6D4C41] text-[#14110F] font-pixel text-[8px] cursor-pointer disabled:cursor-not-allowed"
               >
-                Rebus Air
+                REBUS
               </button>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-[#120F0D] overflow-hidden">
+            <div className="h-2.5 w-full bg-[#261714] border border-[#0B0908]">
               <div
-                className={`h-full transition-all duration-150 ${
-                  kettle.isBoiling ? 'bg-amber-400' : 'bg-sky-500/80'
-                }`}
+                className={`h-full transition-all duration-150 ${kettle.isBoiling ? 'bg-[#FFB300]' : 'bg-[#29B6F6]'
+                  }`}
                 style={{
-                  width: `${
-                    kettle.isBoiling
+                  width: `${kettle.isBoiling
                       ? kettle.boilProgress
                       : (kettle.hotServings / MAX_KETTLE_SERVINGS) * 100
-                  }%`,
+                    }%`,
                 }}
               />
             </div>
@@ -159,11 +161,10 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
                   key={base}
                   type="button"
                   onClick={() => setDrinkBase(base)}
-                  className={`py-1.5 px-1 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
-                    active
-                      ? 'bg-amber-500/20 border-amber-400 text-amber-200'
-                      : 'bg-[#1A1613] border-[#3E312B] text-[#A89F91] hover:text-[#F3EFEA]'
-                  }`}
+                  className={`pixel-btn py-1.5 px-1 font-vt text-base leading-none cursor-pointer ${active
+                      ? 'bg-[#FFB300] text-[#14110F] font-bold'
+                      : 'bg-[#261714] text-[#D7CCC8]'
+                    }`}
                 >
                   {DRINK_LABELS[base]}
                 </button>
@@ -177,11 +178,10 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
               type="button"
               disabled={drinkBase === 'susu_jahe'}
               onClick={() => setSweet((v) => !v)}
-              className={`py-1.5 px-2 rounded-lg text-[11px] font-medium border transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed ${
-                effectiveSweet
-                  ? 'bg-[#2C221E] border-amber-600/60 text-amber-200'
-                  : 'bg-[#1A1613] border-[#3E312B] text-[#A89F91]'
-              }`}
+              className={`pixel-btn py-1 px-2 font-vt text-base cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed ${effectiveSweet
+                  ? 'bg-[#4E342E] text-[#FFE082]'
+                  : 'bg-[#14110F] text-[#A1887F]'
+                }`}
             >
               {effectiveSweet ? 'Pakai Gula' : 'Tanpa Gula'}
             </button>
@@ -190,21 +190,12 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
               type="button"
               disabled={drinkBase === 'susu_jahe'}
               onClick={() => setIced((v) => !v)}
-              className={`py-1.5 px-2 rounded-lg text-[11px] font-medium border flex items-center justify-center gap-1 transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed ${
-                effectiveIced
-                  ? 'bg-sky-950/60 border-sky-500/50 text-sky-200'
-                  : 'bg-[#2C221E] border-orange-700/50 text-orange-200'
-              }`}
+              className={`pixel-btn py-1 px-2 font-vt text-base cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed ${effectiveIced
+                  ? 'bg-[#0277BD] text-[#EFEBE9]'
+                  : 'bg-[#D84315] text-[#EFEBE9]'
+                }`}
             >
-              {effectiveIced ? (
-                <>
-                  <Snowflake className="w-3 h-3" /> Es Dingin
-                </>
-              ) : (
-                <>
-                  <Flame className="w-3 h-3" /> Panas
-                </>
-              )}
+              {effectiveIced ? 'Es Dingin' : 'Panas'}
             </button>
           </div>
         </div>
@@ -219,58 +210,48 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
               iced: effectiveIced,
             })
           }
-          className="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:bg-[#2A211D] disabled:text-[#6B6158] text-[#181512] font-bold text-xs transition-colors cursor-pointer disabled:cursor-not-allowed"
+          className="pixel-btn w-full py-2 px-2 bg-[#FFB300] hover:bg-[#FFC107] disabled:bg-[#261714] disabled:text-[#6D4C41] text-[#14110F] font-pixel text-[9px] cursor-pointer disabled:cursor-not-allowed"
         >
           {tray.drink
-            ? 'Nampan Sudah Ada Minuman'
-            : `Racik ${formatDrinkName({
-                base: drinkBase,
-                sweet: effectiveSweet,
-                iced: effectiveIced,
-              })}`}
+            ? 'NAMPAN PENUH'
+            : `RACIK ${formatDrinkName({
+              base: drinkBase,
+              sweet: effectiveSweet,
+              iced: effectiveIced,
+            }).toUpperCase()}`}
         </button>
       </div>
 
       {/* 2. Wajan & Rak Hangat */}
-      <div className="lg:col-span-4 wood-panel rounded-xl border border-[#463730] p-3 flex flex-col justify-between gap-2.5">
+      <div className="lg:col-span-4 pixel-wood p-3 flex flex-col justify-between gap-2">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-orange-300 flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5" />
-              Wajan Penggorengan
+            <h2 className="font-pixel text-[10px] text-[#FFB300]">
+              WAJAN &amp; RAK HANGAT
             </h2>
-            <span className="text-[11px] text-[#A89F91]">
-              Adonan: <strong className="font-mono-num text-[#F3EFEA]">{inventory.batter}</strong>
+            <span className="font-vt text-base text-[#EFEBE9]">
+              Adonan: {inventory.batter}
             </span>
           </div>
 
           {/* Wok Slots */}
           <div
-            className={`grid gap-2 mb-2.5 ${
-              wokSlots.length <= 2
+            className={`grid gap-2 mb-2 ${wokSlots.length <= 2
                 ? 'grid-cols-2'
                 : wokSlots.length === 3
-                ? 'grid-cols-3'
-                : 'grid-cols-4'
-            }`}
+                  ? 'grid-cols-3'
+                  : 'grid-cols-4'
+              }`}
           >
             {wokSlots.map((slot) => {
               const pct = Math.min(100, slot.progress);
               const burnPct =
                 slot.progress > 100
                   ? Math.min(
-                      100,
-                      ((slot.progress - 100) / (BURN_THRESHOLD - 100)) * 100
-                    )
+                    100,
+                    ((slot.progress - 100) / (BURN_THRESHOLD - 100)) * 100
+                  )
                   : 0;
-
-              let ringColor = '#F59E0B';
-              if (slot.status === 'ready') ringColor = '#10B981';
-              if (slot.status === 'burned') ringColor = '#EF4444';
-
-              const radius = 17;
-              const circumference = 2 * Math.PI * radius;
-              const offset = circumference - (pct / 100) * circumference;
 
               return (
                 <button
@@ -278,66 +259,44 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
                   type="button"
                   disabled={slot.status === 'empty' || slot.status === 'cooking'}
                   onClick={() => onClickWokSlot(slot.id)}
-                  className={`relative rounded-xl p-2 border flex flex-col items-center justify-center min-h-[82px] transition-all ${
-                    slot.status === 'empty'
-                      ? 'bg-[#181512]/70 border-dashed border-[#3E312B] text-[#6B6158] cursor-default'
+                  className={`border-2 border-[#0B0908] p-2 min-h-[78px] flex flex-col items-center justify-center transition-colors ${slot.status === 'empty'
+                      ? 'bg-[#14110F] text-[#6D4C41] cursor-default'
                       : slot.status === 'cooking'
-                      ? 'bg-[#211A16] border-amber-700/50 text-amber-200 cursor-wait animate-sizzle'
-                      : slot.status === 'ready'
-                      ? 'bg-emerald-950/45 border-emerald-400 text-emerald-200 cursor-pointer ring-1 ring-emerald-400/40'
-                      : 'bg-red-950/60 border-red-500 text-red-200 cursor-pointer'
-                  }`}
+                        ? 'bg-[#261714] text-[#FFB300] cursor-wait'
+                        : slot.status === 'ready'
+                          ? 'bg-[#2E7D32] text-[#EFEBE9] cursor-pointer shadow-[2px_2px_0_#0B0908]'
+                          : 'bg-[#D32F2F] text-[#EFEBE9] cursor-pointer shadow-[2px_2px_0_#0B0908]'
+                    }`}
                 >
                   {slot.status === 'empty' ? (
-                    <span className="text-[10px]">Lubang {slot.id + 1}</span>
+                    <span className="font-vt text-base">Lubang {slot.id + 1}</span>
                   ) : (
                     <>
-                      <div className="relative w-10 h-10 flex items-center justify-center">
-                        <svg className="w-10 h-10 -rotate-90" viewBox="0 0 42 42">
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r={radius}
-                            fill="none"
-                            stroke="#14110F"
-                            strokeWidth="4"
-                          />
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r={radius}
-                            fill="none"
-                            stroke={ringColor}
-                            strokeWidth="4"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={offset}
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <span className="absolute font-mono-num text-[9px] font-bold">
-                          {slot.status === 'burned'
-                            ? 'X'
-                            : slot.status === 'ready'
-                            ? 'OK'
-                            : `${Math.floor(pct)}%`}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-semibold mt-1 truncate max-w-full">
+                      <PixelGorenganIcon />
+                      <span className="font-vt text-base font-bold leading-tight mt-0.5">
                         {slot.type ? GORENGAN_LABELS[slot.type].split(' ')[0] : ''}
                       </span>
-                      {slot.status === 'ready' && (
-                        <div className="w-full h-1 bg-[#14110F] rounded-full mt-1 overflow-hidden">
-                          <div
-                            className="h-full bg-orange-500"
-                            style={{ width: `${burnPct}%` }}
-                          />
-                        </div>
-                      )}
-                      {slot.status === 'burned' && (
-                        <span className="text-[9px] font-bold text-red-300">
-                          GOSONG (Buang)
-                        </span>
-                      )}
+                      <div className="w-full h-2 bg-[#14110F] border border-[#0B0908] mt-1">
+                        <div
+                          className={`h-full ${slot.status === 'burned'
+                              ? 'bg-[#14110F]'
+                              : slot.status === 'ready'
+                                ? 'bg-[#FFB300]'
+                                : 'bg-[#FF8F00]'
+                            }`}
+                          style={{
+                            width: `${slot.status === 'ready' ? burnPct : pct
+                              }%`,
+                          }}
+                        />
+                      </div>
+                      <span className="font-pixel text-[8px] mt-1">
+                        {slot.status === 'burned'
+                          ? 'GOSONG!'
+                          : slot.status === 'ready'
+                            ? 'ANGKAT!'
+                            : `${Math.floor(pct)}%`}
+                      </span>
                     </>
                   )}
                 </button>
@@ -353,7 +312,7 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
                 type="button"
                 disabled={!hasEmptyWok || inventory.batter <= 0}
                 onClick={() => onStartFry(type)}
-                className="py-1.5 px-2 rounded-lg bg-[#2C221E] hover:bg-[#3A2D28] disabled:bg-[#1E1815] disabled:text-[#6B6158] border border-orange-800/50 text-orange-200 text-[11px] font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed"
+                className="pixel-btn py-1.5 px-1 bg-[#4E342E] hover:bg-[#5D4037] disabled:bg-[#261714] disabled:text-[#6D4C41] text-[#FFE082] font-vt text-base font-bold cursor-pointer disabled:cursor-not-allowed"
               >
                 + {GORENGAN_LABELS[type].split(' ')[0]}
               </button>
@@ -362,13 +321,13 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
         </div>
 
         {/* Warming Rack */}
-        <div className="bg-[#181512]/85 border border-[#3E312B] rounded-lg p-2">
-          <div className="flex items-center justify-between text-[10px] text-[#A89F91] mb-1.5">
-            <span>Rak Hangat (Klik untuk taruh di Nampan)</span>
-            <span className="font-mono-num">{warmRack.length}/6</span>
+        <div className="bg-[#14110F] border-2 border-[#0B0908] p-2">
+          <div className="flex items-center justify-between font-vt text-sm text-[#D7CCC8] mb-1">
+            <span>Rak Hangat (Klik ke Nampan)</span>
+            <span>{warmRack.length}/6</span>
           </div>
           {warmRack.length === 0 ? (
-            <div className="text-[11px] text-[#6B6158] text-center py-1">
+            <div className="font-vt text-base text-[#6D4C41] text-center">
               Belum ada gorengan matang
             </div>
           ) : (
@@ -376,38 +335,20 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
               {warmRack.map((item) => {
                 const isWarm = item.freshness > 25;
                 return (
-                  <div
+                  <button
                     key={item.id}
-                    className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-1 text-[10px] font-semibold ${
-                      isWarm
-                        ? 'bg-amber-950/60 border-amber-500/50 text-amber-200'
-                        : 'bg-stone-900 border-stone-700 text-stone-400'
-                    }`}
+                    type="button"
+                    onClick={() =>
+                      isWarm ? onPickFromRack(item.id) : onDiscardFromRack(item.id)
+                    }
+                    className={`pixel-btn px-2 py-0.5 font-vt text-sm cursor-pointer ${isWarm
+                        ? 'bg-[#FFB300] text-[#14110F] font-bold'
+                        : 'bg-[#5D4037] text-[#D7CCC8]'
+                      }`}
                   >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        isWarm ? onPickFromRack(item.id) : onDiscardFromRack(item.id)
-                      }
-                      className="cursor-pointer hover:underline"
-                      title={
-                        isWarm
-                          ? 'Taruh ke Nampan Saji'
-                          : 'Sudah dingin — klik untuk buang'
-                      }
-                    >
-                      {GORENGAN_LABELS[item.type].split(' ')[0]}{' '}
-                      <span className="font-mono-num opacity-80">
-                        {isWarm ? `${Math.round(item.freshness)}%` : 'Dingin'}
-                      </span>
-                    </button>
-                    {!isWarm && (
-                      <Trash2
-                        onClick={() => onDiscardFromRack(item.id)}
-                        className="w-3 h-3 text-red-400 cursor-pointer"
-                      />
-                    )}
-                  </div>
+                    {GORENGAN_LABELS[item.type].split(' ')[0]}{' '}
+                    {isWarm ? `${Math.round(item.freshness)}%` : '(Dingin/Buang)'}
+                  </button>
                 );
               })}
             </div>
@@ -416,43 +357,34 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
       </div>
 
       {/* 3. Nampan Saji & Nasi Kucing */}
-      <div className="lg:col-span-3 wood-panel rounded-xl border border-[#463730] p-3 flex flex-col justify-between gap-2.5">
+      <div className="lg:col-span-3 pixel-wood p-3 flex flex-col justify-between gap-2">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-              <Utensils className="w-3.5 h-3.5" />
-              Nampan Saji
+            <h2 className="font-pixel text-[10px] text-[#A5D6A7]">
+              NAMPAN SAJI
             </h2>
             {!trayEmpty && (
               <button
                 type="button"
                 onClick={onTrashTray}
-                className="inline-flex items-center gap-1 text-[10px] text-red-300 hover:text-red-200 cursor-pointer"
+                className="pixel-btn px-2 py-0.5 bg-[#D32F2F] text-[#EFEBE9] font-pixel text-[8px] cursor-pointer"
               >
-                <Trash2 className="w-3 h-3" />
-                Buang
+                BUANG
               </button>
             )}
           </div>
 
-          <div className="wood-counter rounded-xl border border-[#4E3E36] p-3 min-h-[108px] flex flex-col justify-center">
+          <div className="pixel-paper p-2.5 min-h-[112px] flex flex-col justify-center">
             {trayEmpty ? (
-              <p className="text-xs text-[#7A6F64] text-center">
+              <p className="font-vt text-lg text-[#5D4037] text-center leading-tight">
                 Nampan kosong. Racik minuman, gorengan, atau ambil Nasi Kucing.
               </p>
             ) : (
               <div className="space-y-1.5">
                 {tray.drink && (
-                  <div className="flex items-center justify-between bg-[#181512]/80 border border-amber-600/40 rounded-lg px-2.5 py-1.5 text-xs">
-                    <div className="flex items-center gap-2 text-amber-200 font-medium">
-                      <div className="relative">
-                        <Coffee className="w-4 h-4 text-amber-400" />
-                        {!tray.drink.iced && (
-                          <span className="absolute -top-2 left-1 w-1 h-2 bg-amber-200/60 rounded-full animate-steam-1" />
-                        )}
-                      </div>
-                      <span>{formatDrinkName(tray.drink)}</span>
-                    </div>
+                  <div className="flex items-center gap-2 bg-[#D7CCC8] border border-[#0B0908] px-2 py-1 font-vt text-base font-bold">
+                    <PixelDrinkIcon iced={tray.drink.iced} />
+                    <span>{formatDrinkName(tray.drink)}</span>
                   </div>
                 )}
 
@@ -460,22 +392,24 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
                   tray.gorengan[g] > 0 ? (
                     <div
                       key={g}
-                      className="flex items-center justify-between bg-[#181512]/80 border border-orange-600/40 rounded-lg px-2.5 py-1 text-xs text-orange-200"
+                      className="flex items-center justify-between bg-[#FFE082] border border-[#0B0908] px-2 py-0.5 font-vt text-base font-bold"
                     >
-                      <span>{GORENGAN_LABELS[g]} Hangat</span>
-                      <span className="font-mono-num font-bold">
-                        x{tray.gorengan[g]}
+                      <span className="flex items-center gap-1.5">
+                        <PixelGorenganIcon />
+                        {GORENGAN_LABELS[g]}
                       </span>
+                      <span>x{tray.gorengan[g]}</span>
                     </div>
                   ) : null
                 )}
 
                 {tray.nasiKucing > 0 && (
-                  <div className="flex items-center justify-between bg-[#181512]/80 border border-stone-600/50 rounded-lg px-2.5 py-1 text-xs text-stone-200">
-                    <span>Nasi Kucing</span>
-                    <span className="font-mono-num font-bold">
-                      x{tray.nasiKucing}
+                  <div className="flex items-center justify-between bg-[#C8E6C9] border border-[#0B0908] px-2 py-0.5 font-vt text-base font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <PixelNasiKucingIcon />
+                      Nasi Kucing
                     </span>
+                    <span>x{tray.nasiKucing}</span>
                   </div>
                 )}
               </div>
@@ -483,61 +417,44 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <button
-            type="button"
-            disabled={inventory.nasiKucing <= 0}
-            onClick={onGrabNasiKucing}
-            className="w-full py-2 px-3 rounded-lg bg-[#342823] hover:bg-[#43332C] disabled:bg-[#1E1815] disabled:text-[#6B6158] border border-[#56443B] text-[#F3EFEA] text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer disabled:cursor-not-allowed"
-          >
-            <span>+ Ambil Nasi Kucing</span>
-            <span className="font-mono-num text-amber-300">
-              Stok: {inventory.nasiKucing}
-            </span>
-          </button>
-          <p className="text-[10px] text-[#A89F91] text-center">
-            Klik kartu pelanggan di atas jika nampan sudah sesuai pesanan.
-          </p>
-        </div>
+        <button
+          type="button"
+          disabled={inventory.nasiKucing <= 0}
+          onClick={onGrabNasiKucing}
+          className="pixel-btn w-full py-2 px-2.5 bg-[#2E7D32] hover:bg-[#388E3C] disabled:bg-[#261714] disabled:text-[#6D4C41] text-[#EFEBE9] font-vt text-lg font-bold flex items-center justify-between cursor-pointer disabled:cursor-not-allowed"
+        >
+          <span className="flex items-center gap-1.5">
+            <PixelNasiKucingIcon />+ Nasi Kucing
+          </span>
+          <span>Stok: {inventory.nasiKucing}</span>
+        </button>
       </div>
 
       {/* 4. Stok Bahan & Belanja Darurat */}
-      <div className="lg:col-span-2 wood-panel rounded-xl border border-[#463730] p-3 flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[#D6CEC2] flex items-center gap-1.5">
-            <PackagePlus className="w-3.5 h-3.5 text-amber-400" />
-            Stok Bahan
-          </h2>
-          <span className="text-[10px] text-[#A89F91]">Darurat</span>
+      <div className="lg:col-span-2 pixel-wood p-3 flex flex-col justify-between">
+        <div className="flex items-center justify-between mb-1.5">
+          <h2 className="font-pixel text-[9px] text-[#EFEBE9]">STOK BAHAN</h2>
+          <span className="font-vt text-sm text-[#FFCC80]">Darurat</span>
         </div>
 
-        <div className="space-y-1.5 flex-1 flex flex-col justify-between">
+        <div className="space-y-1 flex-1 flex flex-col justify-between">
           {INGREDIENT_ORDER.map((id) => {
             const meta = INGREDIENTS[id];
             const count = inventory[id];
             const low = count <= 3;
-            const canBuy =
-              cash >= meta.emergencyPrice && count < meta.maxStock;
+            const canBuy = cash >= meta.emergencyPrice && count < meta.maxStock;
 
             return (
               <div
                 key={id}
-                className={`flex items-center justify-between gap-1 rounded-lg px-2 py-1 border text-[11px] ${
-                  low
-                    ? 'bg-red-950/35 border-red-700/50 text-red-200'
-                    : 'bg-[#181512]/75 border-[#3A2E28] text-[#D6CEC2]'
-                }`}
+                className={`flex items-center justify-between gap-1 px-2 py-0.5 border-2 border-[#0B0908] font-vt text-base ${low
+                    ? 'bg-[#B71C1C] text-[#EFEBE9]'
+                    : 'bg-[#14110F] text-[#D7CCC8]'
+                  }`}
               >
-                <div className="flex items-center gap-1 min-w-0">
-                  {low && (
-                    <AlertTriangle className="w-3 h-3 text-red-400 shrink-0" />
-                  )}
-                  <span className="truncate">{meta.shortName}</span>
-                </div>
+                <span className="truncate">{meta.shortName}</span>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="font-mono-num font-bold text-[#F3EFEA]">
-                    {count}
-                  </span>
+                  <span className="font-bold text-[#EFEBE9]">{count}</span>
                   <button
                     type="button"
                     disabled={!canBuy}
@@ -545,7 +462,7 @@ export const KitchenWorkbench: React.FC<KitchenWorkbenchProps> = ({
                     title={`Beli darurat +${meta.emergencyQty} (${formatRupiah(
                       meta.emergencyPrice
                     )})`}
-                    className="px-1.5 py-0.5 rounded bg-amber-600/80 hover:bg-amber-500 disabled:bg-[#2A211D] disabled:text-[#6B6158] text-[#181512] font-bold text-[10px] cursor-pointer disabled:cursor-not-allowed"
+                    className="pixel-btn px-1.5 bg-[#FFB300] disabled:bg-[#261714] disabled:text-[#6D4C41] text-[#14110F] font-pixel text-[8px] cursor-pointer disabled:cursor-not-allowed"
                   >
                     +{meta.emergencyQty}
                   </button>
