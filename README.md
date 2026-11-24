@@ -1,6 +1,8 @@
 # Warung Tycoon: Midnight Shift
 
-**Play Now:** https://nplwi.github.io/warung-tycoon/
+[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-PLAY_NOW-F59E0B?style=for-the-badge&labelColor=181512)](https://nplwi.github.io/warung-tycoon/)
+
+> Play directly in your browser: https://nplwi.github.io/warung-tycoon/
 
 A cozy, fast-paced 5-minute Indonesian late-night roadside coffee stall (*Warung Kopi / Angkringan*) micro-management game built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.
 
